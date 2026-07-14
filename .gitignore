@@ -1,0 +1,27 @@
+# Environment & Secret Files
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Build Artifacts & Dependencies
+node_modules/
+dist/
+target/
+*.jar
+*.war
+.m2/
+
+# IDE & OS Files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+.antigravityignore
+
+# Logs
+*.log
+logs/
