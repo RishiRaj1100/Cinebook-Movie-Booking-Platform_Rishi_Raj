@@ -1,6 +1,6 @@
 import { AuthResponse, Booking, HoldSeatsResponse, Movie, PaymentOrderResponse, Show, ShowSeat, Theater } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 function getHeaders(): HeadersInit {
   const token = localStorage.getItem('token');

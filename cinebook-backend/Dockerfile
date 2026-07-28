@@ -10,4 +10,4 @@ WORKDIR /app
 COPY --from=build /app/target/cinebook-backend-1.0.0.jar app.jar
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=postgres
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-Xms128m", "-Xmx320m", "-XX:MaxMetaspaceSize=160m", "-XX:+UseSerialGC", "-XX:+ExitOnOutOfMemoryError", "-jar", "app.jar"]

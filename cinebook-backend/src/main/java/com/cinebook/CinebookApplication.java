@@ -2,6 +2,7 @@ package com.cinebook;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -9,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * CineBook — Movie Ticket Booking System
  * Spring Boot 3.3 | Java 21 | PostgreSQL | JWT Auth | Razorpay | Spring AI
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = { RedisRepositoriesAutoConfiguration.class })
 @EnableCaching
 @EnableScheduling
 public class CinebookApplication {
