@@ -27,8 +27,7 @@ spring:
     open-in-view: false
     properties:
       hibernate:
-        temp:
-          use_jdbc_metadata_defaults: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         enable_lazy_load_no_trans: true
         format_sql: true
         jdbc:
