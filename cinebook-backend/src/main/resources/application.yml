@@ -88,7 +88,7 @@ tmdb:
 # ===== App =====
 app:
   cors:
-    allowed-origins: ${CORS_ORIGINS:http://localhost:3000,https://cinebook-h67dklz41-rishiraj02989-5516s-projects.vercel.app}
+    allowed-origins: ${CORS_ORIGINS:*}
   seat-lock:
     duration-minutes: 10
   frontend-url: ${FRONTEND_URL:https://cinebook-h67dklz41-rishiraj02989-5516s-projects.vercel.app}
