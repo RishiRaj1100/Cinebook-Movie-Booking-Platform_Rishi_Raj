@@ -41,6 +41,12 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (movieRepository.count() > 0 && showRepository.count() > 0) {
+            log.info("CineBook catalog already initialized with {} movies and {} active shows across theaters. Skipping startup seeding.",
+                    movieRepository.count(), showRepository.count());
+            return;
+        }
+
         // 1. Ensure theaters exist across all 18 major Indian cities
         List<String> targetCities = List.of(
             "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", 
