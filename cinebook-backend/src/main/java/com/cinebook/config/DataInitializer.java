@@ -80,37 +80,41 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // 2. Fetch & sync popular Indian & Global movies from TMDB API
-        log.info("Syncing Indian (Bollywood/Tollywood/Kollywood) and Global movies from TMDB API...");
-        try {
-            // Import iconic blockbusters for Telugu, Tamil, Kannada, Malayalam, and Hindi
-            List<Integer> indianTmdbIds = List.of(
-                579974,  // RRR (Telugu)
-                1013444, // Kalki 2898 AD (Telugu)
-                792307,  // Pushpa 2: The Rule (Telugu)
-                492207,  // Baahubali 2 (Telugu)
-                934632,  // Leo (Tamil)
-                934433,  // Jailer (Tamil)
-                856289,  // Ponniyin Selvan: Part II (Tamil)
-                736280,  // GOAT (Tamil)
-                587412,  // K.G.F: Chapter 2 (Kannada)
-                564147,  // K.G.F: Chapter 1 (Kannada)
-                858485,  // Kantara (Kannada)
-                634120,  // 777 Charlie (Kannada)
-                1069945, // Manjummel Boys (Malayalam)
-                1149791, // Premalu (Malayalam)
-                1166133, // Bramayugam (Malayalam)
-                472221,  // The Goat Life (Malayalam)
-                866398,  // Jawan (Hindi)
-                1159311, // Stree 2 (Hindi)
-                862552   // Pathaan (Hindi)
-            );
-            for (Integer id : indianTmdbIds) {
-                try { tmdbService.importMovieFromTmdb(id); } catch (Exception e) { log.debug("Import TMDB error {}: {}", id, e.getMessage()); }
+        if (movieRepository.count() == 0) {
+            log.info("Database empty: Syncing Indian (Bollywood/Tollywood/Kollywood) and Global movies from TMDB API...");
+            try {
+                // Import iconic blockbusters for Telugu, Tamil, Kannada, Malayalam, and Hindi
+                List<Integer> indianTmdbIds = List.of(
+                    579974,  // RRR (Telugu)
+                    1013444, // Kalki 2898 AD (Telugu)
+                    792307,  // Pushpa 2: The Rule (Telugu)
+                    492207,  // Baahubali 2 (Telugu)
+                    934632,  // Leo (Tamil)
+                    934433,  // Jailer (Tamil)
+                    856289,  // Ponniyin Selvan: Part II (Tamil)
+                    736280,  // GOAT (Tamil)
+                    587412,  // K.G.F: Chapter 2 (Kannada)
+                    564147,  // K.G.F: Chapter 1 (Kannada)
+                    858485,  // Kantara (Kannada)
+                    634120,  // 777 Charlie (Kannada)
+                    1069945, // Manjummel Boys (Malayalam)
+                    1149791, // Premalu (Malayalam)
+                    1166133, // Bramayugam (Malayalam)
+                    472221,  // The Goat Life (Malayalam)
+                    866398,  // Jawan (Hindi)
+                    1159311, // Stree 2 (Hindi)
+                    862552   // Pathaan (Hindi)
+                );
+                for (Integer id : indianTmdbIds) {
+                    if (!movieRepository.existsByTmdbId(id)) {
+                        try { tmdbService.importMovieFromTmdb(id); } catch (Exception e) { log.debug("Import TMDB error {}: {}", id, e.getMessage()); }
+                    }
+                }
+                tmdbService.syncPopularMoviesFromTmdb(1);
+            } catch (Exception e) {
+                log.warn("TMDB sync failed during initialization (using fallback movies): {}", e.getMessage());
+                seedFallbackMovies();
             }
-            tmdbService.syncPopularMoviesFromTmdb(2);
-        } catch (Exception e) {
-            log.warn("TMDB sync failed during initialization (using fallback movies): {}", e.getMessage());
-            seedFallbackMovies();
         }
 
         // Normalize languages & set high quality working YouTube trailers for DB catalog
@@ -118,52 +122,65 @@ public class DataInitializer implements CommandLineRunner {
         for (Movie m : allMovies) {
             String title = m.getTitle().toLowerCase();
             if (title.contains("kgf") || title.contains("k.g.f")) {
-                m.setLanguage("Kannada");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=JKa05nyUmuQ");
-                movieRepository.save(m);
+                if (!"Kannada".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Kannada");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=JKa05nyUmuQ");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("rrr")) {
-                m.setLanguage("Telugu");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=Gy4B78S1-dU");
-                movieRepository.save(m);
+                if (!"Telugu".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Telugu");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=Gy4B78S1-dU");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("jawan")) {
-                m.setLanguage("Hindi");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=COv52Qyctws");
-                movieRepository.save(m);
+                if (!"Hindi".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Hindi");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=COv52Qyctws");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("stree")) {
-                m.setLanguage("Hindi");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=KVnheXwqF08");
-                movieRepository.save(m);
+                if (!"Hindi".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Hindi");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=KVnheXwqF08");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("pathaan")) {
-                m.setLanguage("Hindi");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=vqu4z34wENw");
-                movieRepository.save(m);
+                if (!"Hindi".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Hindi");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=vqu4z34wENw");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("kalki")) {
-                m.setLanguage("Telugu");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=kQDd1AhGIHk");
-                movieRepository.save(m);
+                if (!"Telugu".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Telugu");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=kQDd1AhGIHk");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("leo")) {
-                m.setLanguage("Tamil");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=Po3jStA673E");
-                movieRepository.save(m);
+                if (!"Tamil".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Tamil");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=Po3jStA673E");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("jailer")) {
-                m.setLanguage("Tamil");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=Y5BeWdODb7c");
-                movieRepository.save(m);
+                if (!"Tamil".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("Tamil");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=Y5BeWdODb7c");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("inception")) {
-                m.setLanguage("English");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=YoHD9XEInc0");
-                movieRepository.save(m);
+                if (!"English".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("English");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=YoHD9XEInc0");
+                    movieRepository.save(m);
+                }
             } else if (title.contains("interstellar")) {
-                m.setLanguage("English");
-                m.setTrailerUrl("https://www.youtube.com/watch?v=zSWdZVtXT7E");
-                movieRepository.save(m);
-            }
-        }
-
-        // Auto-sync missing trailerUrls from TMDB for all catalog movies
-        for (Movie m : allMovies) {
-            if ((m.getTrailerUrl() == null || m.getTrailerUrl().isBlank()) && m.getTmdbId() != null) {
-                try { tmdbService.importMovieFromTmdb(m.getTmdbId()); } catch (Exception ignored) {}
+                if (!"English".equalsIgnoreCase(m.getLanguage())) {
+                    m.setLanguage("English");
+                    m.setTrailerUrl("https://www.youtube.com/watch?v=zSWdZVtXT7E");
+                    movieRepository.save(m);
+                }
             }
         }
 
@@ -175,6 +192,8 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedMultiDateShows() {
+        if (showRepository.count() > 0) return;
+
         List<Movie> movies = movieRepository.findAll();
         List<Screen> screens = screenRepository.findAll();
         if (movies.isEmpty() || screens.isEmpty()) return;
