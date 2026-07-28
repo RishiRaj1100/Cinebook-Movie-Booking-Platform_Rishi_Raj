@@ -1,0 +1,17 @@
+[build]
+  base = "cinebook-frontend"
+  command = "npm run build"
+  publish = "dist"
+
+# Proxy /api requests to your Render backend to avoid CORS issues
+[[redirects]]
+  from = "/api/*"
+  to = "https://cinebook-api-6cw7.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# Fallback for Single Page Application (SPA) client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
